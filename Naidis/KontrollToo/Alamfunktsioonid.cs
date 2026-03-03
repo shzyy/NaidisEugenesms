@@ -1,35 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 public class Alamfunktsioonid
 {
-  
     public static void KytuseKalkulaator()
     {
-        Console.Write("Sisesta läbitud vahemaa (km): ");
-        double km = Convert.ToDouble(Console.ReadLine());
+        Console.Write("Sisesta läbitud km: ");
+        double km = double.Parse(Console.ReadLine());
 
-        Console.Write("Sisesta kütusekulu 100km kohta (L): ");
-        double kulu100 = Convert.ToDouble(Console.ReadLine());
+        Console.Write("Sisesta kütusekulu 100km kohta: ");
+        double kulu100 = double.Parse(Console.ReadLine());
 
         Console.Write("Sisesta kütuse hind (€): ");
-        double hind = Convert.ToDouble(Console.ReadLine());
+        double hind = double.Parse(Console.ReadLine());
 
-        double kulunudKytus = (km / 100) * kulu100;
-        double maksumus = kulunudKytus * hind;
+        double kogukulu = (km / 100) * kulu100;
+        double maksumus = kogukulu * hind;
 
-        Console.WriteLine($"\nKulunud kütus: {kulunudKytus:F2} L");
-        Console.WriteLine($"Reisi maksumus: {maksumus:F2} €\n");
+        Console.WriteLine($"Kütust kulus: {kogukulu:F2} liitrit");
+        Console.WriteLine($"Reisi maksumus: {maksumus:F2} €");
     }
 
-  
-    public static string HindaIsikukood(string isikukood)
+    public static void HindaIsikukood()
     {
+        Console.Write("Sisesta isikukood: ");
+        string isikukood = Console.ReadLine();
+
         if (isikukood.Length != 11)
-            return "Viga: Isikukood peab olema 11-kohaline!";
+        {
+            Console.WriteLine("Viga: Isikukood peab olema 11-kohaline!");
+            return;
+        }
 
         char esimene = isikukood[0];
-
         string sugu;
         int sajand;
 
@@ -40,25 +46,30 @@ public class Alamfunktsioonid
         else
             sugu = "Tundmatu";
 
-        if (esimene == '1' || esimene == '2') sajand = 1800;
-        else if (esimene == '3' || esimene == '4') sajand = 1900;
-        else if (esimene == '5' || esimene == '6') sajand = 2000;
-        else sajand = 0;
+        if (esimene == '1' || esimene == '2')
+            sajand = 1800;
+        else if (esimene == '3' || esimene == '4')
+            sajand = 1900;
+        else if (esimene == '5' || esimene == '6')
+            sajand = 2000;
+        else
+            sajand = 0;
 
         string aastaStr = isikukood.Substring(1, 2);
         string kuu = isikukood.Substring(3, 2);
         string paev = isikukood.Substring(5, 2);
 
-        int aasta;
-        if (!int.TryParse(aastaStr, out aasta))
-            return "Viga: Vigane sünniaasta!";
+        if (!int.TryParse(aastaStr, out int aasta))
+        {
+            Console.WriteLine("Vigane sünniaasta!");
+            return;
+        }
 
         aasta += sajand;
 
-        return $"Oled {sugu}, sündinud {paev}.{kuu}.{aasta}";
+        Console.WriteLine($"Oled {sugu}, sündinud {paev}.{kuu}.{aasta}");
     }
 
-   
     public static void TaringuMang()
     {
         Random rnd = new Random();
@@ -79,12 +90,25 @@ public class Alamfunktsioonid
             kogusumma += summa;
         }
 
-        Console.WriteLine("\nVisked:");
+        Console.WriteLine("Visked:");
         foreach (int s in summad)
+        {
             Console.Write(s + " ");
+        }
 
-        Console.WriteLine($"\nDuubleid visati: {duublid} korda");
-        Console.WriteLine($"Kõikide visete kogusumma: {kogusumma}\n");
+        Console.WriteLine($"\nDuubleid tuli: {duublid}");
+        Console.WriteLine($"Kõikide visete kogusumma: {kogusumma}");
+    }
+
+    public static void KysiJaArvutaPalk()
+    {
+        Console.Write("Sisesta brutopalk: ");
+        double brutopalk = double.Parse(Console.ReadLine());
+
+        var tulemus = ArvutaPalk(brutopalk);
+
+        Console.WriteLine($"Maksuvaba tulu: {tulemus.Item1:F2} €");
+        Console.WriteLine($"Netopalk: {tulemus.Item2:F2} €");
     }
 
     public static Tuple<double, double> ArvutaPalk(double brutopalk)
@@ -94,16 +118,15 @@ public class Alamfunktsioonid
         if (brutopalk < 1200)
             maksuvaba = 654;
 
-        double tootuskindlustus = brutopalk * 0.016;
-        double kogumispension = brutopalk * 0.02;
-
         double tulumaksuAlus = brutopalk - maksuvaba;
         if (tulumaksuAlus < 0)
             tulumaksuAlus = 0;
 
         double tulumaks = tulumaksuAlus * 0.20;
+        double tootuskindlustus = brutopalk * 0.016;
+        double pension = brutopalk * 0.02;
 
-        double neto = brutopalk - tulumaks - tootuskindlustus - kogumispension;
+        double neto = brutopalk - tulumaks - tootuskindlustus - pension;
 
         return Tuple.Create(maksuvaba, neto);
     }
