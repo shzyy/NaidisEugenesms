@@ -1,133 +1,88 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-public class Alamfunktsioonid
+namespace Jareltöö1
 {
-    public static void KytuseKalkulaator()
+    public class Alamfunktsioonid
     {
-        Console.Write("Sisesta läbitud km: ");
-        double km = double.Parse(Console.ReadLine());
-
-        Console.Write("Sisesta kütusekulu 100km kohta: ");
-        double kulu100 = double.Parse(Console.ReadLine());
-
-        Console.Write("Sisesta kütuse hind (€): ");
-        double hind = double.Parse(Console.ReadLine());
-
-        double kogukulu = (km / 100) * kulu100;
-        double maksumus = kogukulu * hind;
-
-        Console.WriteLine($"Kütust kulus: {kogukulu:F2} liitrit");
-        Console.WriteLine($"Reisi maksumus: {maksumus:F2} €");
-    }
-
-    public static void HindaIsikukood()
-    {
-        Console.Write("Sisesta isikukood: ");
-        string isikukood = Console.ReadLine();
-
-        if (isikukood.Length != 11)
+        // Ülesanne 1
+        public static void Piletikalkulaator()
         {
-            Console.WriteLine("Viga: Isikukood peab olema 11-kohaline!");
-            return;
+            Console.Write("Sisesta täispileti hind: ");
+            double hind = Convert.ToDouble(Console.ReadLine());
+
+            Console.Write("Sisesta täiskasvanute arv: ");
+            int tais = Convert.ToInt32(Console.ReadLine());
+
+            Console.Write("Sisesta laste arv: ");
+            int lapsed = Convert.ToInt32(Console.ReadLine());
+
+            double taisSumma = tais * hind;
+            double lapseHind = hind * 0.5;
+            double lapseSumma = lapsed * lapseHind;
+
+            double koguSumma = taisSumma + lapseSumma;
+
+            Console.WriteLine("\n--- Arve ---");
+            Console.WriteLine($"Täiskasvanud: {taisSumma:F2} €");
+            Console.WriteLine($"Lapsed: {lapseSumma:F2} €");
+            Console.WriteLine($"Kokku: {koguSumma:F2} €");
         }
 
-        char esimene = isikukood[0];
-        string sugu;
-        int sajand;
-
-        if (esimene == '1' || esimene == '3' || esimene == '5')
-            sugu = "Mees";
-        else if (esimene == '2' || esimene == '4' || esimene == '6')
-            sugu = "Naine";
-        else
-            sugu = "Tundmatu";
-
-        if (esimene == '1' || esimene == '2')
-            sajand = 1800;
-        else if (esimene == '3' || esimene == '4')
-            sajand = 1900;
-        else if (esimene == '5' || esimene == '6')
-            sajand = 2000;
-        else
-            sajand = 0;
-
-        string aastaStr = isikukood.Substring(1, 2);
-        string kuu = isikukood.Substring(3, 2);
-        string paev = isikukood.Substring(5, 2);
-
-        if (!int.TryParse(aastaStr, out int aasta))
+        // Ülesanne 2
+        public static void HindaKuupaeva(string kuupaev)
         {
-            Console.WriteLine("Vigane sünniaasta!");
-            return;
+            if (kuupaev.Length != 10)
+            {
+                Console.WriteLine("Vigane formaat!");
+                return;
+            }
+
+            string aasta = kuupaev.Substring(0, 4);
+            string kuu = kuupaev.Substring(5, 2);
+            string paev = kuupaev.Substring(8, 2);
+
+            Console.WriteLine($"Sündisid {paev}. päeval, {kuu}. kuul aastal {aasta}.");
         }
 
-        aasta += sajand;
-
-        Console.WriteLine($"Oled {sugu}, sündinud {paev}.{kuu}.{aasta}");
-    }
-
-    public static void TaringuMang()
-    {
-        Random rnd = new Random();
-        List<int> summad = new List<int>();
-        int duublid = 0;
-        int kogusumma = 0;
-
-        for (int i = 0; i < 10; i++)
+        // Ülesanne 3
+        public static void MundiMang()
         {
-            int t1 = rnd.Next(1, 7);
-            int t2 = rnd.Next(1, 7);
+            Random rnd = new Random();
+            List<int> visked = new List<int>();
 
-            if (t1 == t2)
-                duublid++;
+            for (int i = 0; i < 10; i++)
+            {
+                int tulemus = rnd.Next(0, 2);
+                visked.Add(tulemus);
+            }
 
-            int summa = t1 + t2;
-            summad.Add(summa);
-            kogusumma += summa;
+            Console.WriteLine("Visked:");
+            foreach (int v in visked)
+            {
+                if (v == 0)
+                    Console.Write("Kiri ");
+                else
+                    Console.Write("Kull ");
+            }
+
+            int kulliArv = 0;
+            foreach (int v in visked)
+            {
+                if (v == 1)
+                    kulliArv++;
+            }
+
+            Console.WriteLine($"\nKull tuli {kulliArv} korda.");
         }
 
-        Console.WriteLine("Visked:");
-        foreach (int s in summad)
+        // Ülesanne 4
+        public static Tuple<double, double> ArvutaRistkylik(double pikkus, double laius)
         {
-            Console.Write(s + " ");
+            double pindala = pikkus * laius;
+            double umbermoot = 2 * (pikkus + laius);
+
+            return new Tuple<double, double>(pindala, umbermoot);
         }
-
-        Console.WriteLine($"\nDuubleid tuli: {duublid}");
-        Console.WriteLine($"Kõikide visete kogusumma: {kogusumma}");
-    }
-
-    public static void KysiJaArvutaPalk()
-    {
-        Console.Write("Sisesta brutopalk: ");
-        double brutopalk = double.Parse(Console.ReadLine());
-
-        var tulemus = ArvutaPalk(brutopalk);
-
-        Console.WriteLine($"Maksuvaba tulu: {tulemus.Item1:F2} €");
-        Console.WriteLine($"Netopalk: {tulemus.Item2:F2} €");
-    }
-
-    public static Tuple<double, double> ArvutaPalk(double brutopalk)
-    {
-        double maksuvaba = 0;
-
-        if (brutopalk < 1200)
-            maksuvaba = 654;
-
-        double tulumaksuAlus = brutopalk - maksuvaba;
-        if (tulumaksuAlus < 0)
-            tulumaksuAlus = 0;
-
-        double tulumaks = tulumaksuAlus * 0.20;
-        double tootuskindlustus = brutopalk * 0.016;
-        double pension = brutopalk * 0.02;
-
-        double neto = brutopalk - tulumaks - tootuskindlustus - pension;
-
-        return Tuple.Create(maksuvaba, neto);
     }
 }
